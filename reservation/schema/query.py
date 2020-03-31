@@ -1,4 +1,4 @@
-from graphene import Field, Boolean, Date, ObjectType, List
+from graphene import Field, Boolean, Date, List
 from graphene_django import DjangoObjectType
 
 from reservation.models import (
@@ -10,12 +10,13 @@ from reservation.models import (
 class TableType(DjangoObjectType):
     class Meta:
         model = TableModel
+        exclude = ('orders',)
 
     reserved = Field(Boolean, date=Date())
 
     def resolve_reserved(self, info, date):
         return OrderModel.objects.filter(
-            id=self.id,
+            table_id=self.id,
             date=date
         ).exists()
 
